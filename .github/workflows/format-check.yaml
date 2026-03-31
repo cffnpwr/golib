@@ -15,7 +15,6 @@ on:
       - "**/*.yaml"
       - "**/*.yml"
       - "treefmt.toml"
-      - "mise.toml"
       - ".github/workflows/format-check.yaml"
 
 concurrency:

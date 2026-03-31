@@ -11,7 +11,7 @@ on:
       - "**/*.go"
       - "go.mod"
       - "go.sum"
-      - "mise.toml"
+      - ".github/mise.lint.toml"
       - ".github/workflows/golangci-lint.yaml"
 
 concurrency:
@@ -33,8 +33,20 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Read mise config
+        id: mise-config
+        shell: bash
+        run: |
+          {
+            echo "content<<EOF"
+            cat .github/mise.lint.toml
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
       - name: Setup mise
         uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+        with:
+          mise_toml: ${{ steps.mise-config.outputs.content }}
 
       - name: Run golangci-lint
         run: golangci-lint run ./...

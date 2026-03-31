@@ -52,7 +52,8 @@
 
               go = pkgs.go-bin.versions.${miseConfig.tools.go};
               golangci-lint = go.tools.golangci-lint.${miseConfig.tools.golangci-lint};
-              gopls = go.tools.gopls.${miseConfig.tools."aqua:golang.org/x/tools/gopls"};
+              gopls = go.tools.gopls.${miseConfig.tools."go:golang.org/x/tools/gopls"};
+              treefmt = pkgs.treefmt.versions.${miseConfig.tools."aqua:numtide/treefmt"};
               yamlfmt = pkgs.yamlfmt.versions.${miseConfig.tools.yamlfmt};
             in
             pkgs.mkShell {
@@ -65,7 +66,7 @@
                 golangci-lint
                 pkgs.nixd
                 pkgs.nixfmt
-                pkgs.treefmt
+                treefmt
                 yamlfmt
 
                 # build tools/dependencies
