@@ -1,0 +1,61 @@
+name: Unit test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "**/*.go"
+      - "go.mod"
+      - "go.sum"
+      - "mise.toml"
+      - ".github/workflows/unit-test.yaml"
+
+concurrency:
+  group: ${{ github.workflow_ref }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  unit-test:
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            os: linux
+            arch: x86_64
+          - runner: ubuntu-24.04-arm
+            os: linux
+            arch: aarch64
+          - runner: macos-15
+            os: darwin
+            arch: aarch64
+          - runner: macos-15-intel
+            os: darwin
+            arch: x86_64
+          - runner: windows-2025
+            os: windows
+            arch: x86_64
+          - runner: windows-11-arm
+            os: windows
+            arch: aarch64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Setup mise
+        uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+
+      - name: Run unit tests
+        run: go test ./...
