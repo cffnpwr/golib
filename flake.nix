@@ -8,6 +8,13 @@
       url = "github:purpleclay/go-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixpkgs-extras = {
+      url = "github:cffnpwr/nixpkgs-extras";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        go-overlay.follows = "go-overlay";
+      };
+    };
   };
 
   outputs =
@@ -15,6 +22,7 @@
       nixpkgs,
       flake-parts,
       go-overlay,
+      nixpkgs-extras,
       ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } {
@@ -27,23 +35,43 @@
 
       perSystem =
         { pkgs, system, ... }:
-        let
-          go = pkgs.go-bin.fromGoMod ./go.mod;
-        in
         {
           _module.args.pkgs = import nixpkgs {
             inherit system;
-            overlays = [ go-overlay.overlays.default ];
-          };
-
-          devShells.default = pkgs.mkShell {
-            packages = [
-              (go.withTools [
-                "golangci-lint"
-                "gopls"
-              ])
+            overlays = [
+              go-overlay.overlays.default
+              nixpkgs-extras.overlays.default
             ];
           };
+
+          formatter = pkgs.treefmt;
+
+          devShells.default =
+            let
+              miseConfig = fromTOML (builtins.readFile ./mise.toml);
+
+              go = pkgs.go-bin.versions.${miseConfig.tools.go};
+              golangci-lint = go.tools.golangci-lint.${miseConfig.tools.golangci-lint};
+              gopls = go.tools.gopls.${miseConfig.tools."aqua:golang.org/x/tools/gopls"};
+              yamlfmt = pkgs.yamlfmt.versions.${miseConfig.tools.yamlfmt};
+            in
+            pkgs.mkShell {
+              packages = [
+                # development tools
+                pkgs.git
+                gopls
+
+                # linter/formatter
+                golangci-lint
+                pkgs.nixd
+                pkgs.nixfmt
+                pkgs.treefmt
+                yamlfmt
+
+                # build tools/dependencies
+                go
+              ];
+            };
         };
     };
 }
