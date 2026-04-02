@@ -106,12 +106,12 @@ func Test_IsPath_Windows(t *testing.T) {
 		},
 		{
 			name: "[negative] it is not a path string when contains control character (0x01)",
-			s:    `C:\path\x01file`,
+			s:    "C:\\path\x01file",
 			want: false,
 		},
 		{
 			name: "[negative] it is not a path string when contains control character (0x1F)",
-			s:    `C:\path\x1Ffile`,
+			s:    "C:\\path\x1Ffile",
 			want: false,
 		},
 	}
