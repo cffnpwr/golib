@@ -1,0 +1,23 @@
+name: GitHub Actions Lint
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/**"
+
+concurrency:
+  group: ${{ github.workflow_ref }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  github-actions-lint:
+    uses: cffnpwr/actions/.github/workflows/github-actions-lint.yaml@827d6803313793c29f98826d5d9c00e92da976cb
+    permissions:
+      contents: read

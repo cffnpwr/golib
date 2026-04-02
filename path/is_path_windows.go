@@ -12,14 +12,14 @@ func isValidPath(s string) bool {
 		return false
 	}
 
-	// Extract and remove drive letter if present.
-	d, ok := extractDriveLetter(s)
+	// Extract and remove device path prefix if present.
+	d, ok := extractDevicePathPrefix(s)
 	if ok {
 		s = s[len(d):]
 	}
 
-	// Extract and remove device path prefix if present.
-	d, ok = extractDevicePathPrefix(s)
+	// Extract and remove drive letter if present.
+	d, ok = extractDriveLetter(s)
 	if ok {
 		s = s[len(d):]
 	}
