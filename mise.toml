@@ -2,5 +2,5 @@
 "go:golang.org/x/tools/gopls" = "0.21.1"
 go = "1.26.2"
 golangci-lint = "2.11.4"
-"aqua:numtide/treefmt" = "2.4.1"
+"aqua:numtide/treefmt" = "2.5.0"
 yamlfmt = "0.21.0"
